@@ -1,9 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:intl/intl.dart';
-import 'package:precise_clock/responsive_button.dart';
+import 'package:precise_clock/SlidingCrossFadeTransition.dart';
+import 'package:precise_clock/animated_tab_switcher.dart';
+
+import 'clock.dart';
 
 void main() {
   runApp(const ClockApp());
@@ -37,165 +37,48 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool _showDetails = false;
+  int _tab = 0;
+
+  static const List<Clock> _clocks = [
+    Clock(),
+    Clock(hourOffset: 1),
+    Clock(hourOffset: 2),
+    Clock(hourOffset: 3),
+    Clock(utc: true),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(40),
-              child: IntrinsicWidth(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const ClockStack(
-                      label: 'Pacific Standard Time',
-                      clock: Clock(),
-                    ),
-                    if (_showDetails)
-                      ...const [
-                        ClockStack(
-                          label: 'Mountain Standard Time',
-                          clock: Clock(hourOffset: 1),
-                        ),
-                        ClockStack(
-                          label: 'Central Standard Time',
-                          clock: Clock(hourOffset: 2),
-                        ),
-                        ClockStack(
-                          label: 'Eastern Standard Time',
-                          clock: Clock(hourOffset: 3),
-                        ),
-                        ClockStack(
-                          label: 'Coordinated Universal Time',
-                          clock: Clock(utc: true),
-                        ),
-                      ].expand((e) => [const SizedBox(height: 30), e]),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          right: 15,
-          top: 30,
-          child: OptionsButton(
-            onTap: () => setState(() => _showDetails = !_showDetails),
-            value: _showDetails,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ClockStack extends StatelessWidget {
-  final String label;
-  final Clock clock;
-
-  const ClockStack({super.key, required this.label, required this.clock});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.5),
-          ),
-        ),
-        const SizedBox(height: 5),
-        clock,
-      ],
-    );
-  }
-}
-
-class OptionsButton extends StatelessWidget {
-  final VoidCallback onTap;
-  final bool value;
-
-  const OptionsButton({super.key, required this.onTap, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return ResponsiveButton(
-      onTap: onTap,
-      wrapperBuilder: (child) => Container(
-        padding: const EdgeInsets.all(7),
-        decoration: BoxDecoration(
-            shape: BoxShape.circle, color: Colors.white.withOpacity(0.2)),
-        child: child,
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 40,
+        vertical: 20,
       ),
-      child: const Icon(Icons.list, size: 32, color: Colors.white)
-          .animate(target: value ? 1 : 0)
-          .crossfade(
-            curve: value ? Curves.easeOutQuint : Curves.easeInQuint,
-            builder: (_) => const Icon(
-              Icons.close,
-              size: 32,
-              color: Colors.white,
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: AnimatedTabSwitcher(
+              labels: const [
+                'PST',
+                'MST',
+                'CST',
+                'EST',
+                'UTC',
+              ],
+              onTabChanged: (tab) => setState(() => _tab = tab),
             ),
           ),
-    ).animate(target: value ? 1 : 0).rotate(
-          curve: value ? Curves.easeOutQuint : Curves.easeInQuint,
-          end: 0.25,
-        );
-  }
-}
-
-class Clock extends StatefulWidget {
-  final int hourOffset;
-  final bool utc;
-
-  const Clock({super.key, this.hourOffset = 0, this.utc = false});
-
-  @override
-  State<Clock> createState() => _ClockState();
-}
-
-class _ClockState extends State<Clock> {
-  late final Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(
-      const Duration(milliseconds: 1),
-      (_) => setState(() {}),
-    );
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  String formatTime(DateTime t) {
-    if (widget.utc) {
-      t = t.toUtc();
-    } else {
-      t = t.copyWith(hour: t.hour + widget.hourOffset);
-    }
-
-    final formatter = DateFormat('hh:mm:ss.SSS');
-    return formatter.format(t);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        formatTime(DateTime.now()),
-        style: const TextStyle(color: Colors.white, fontSize: 50),
+          Expanded(
+            child: SlidingCrossFadeTransition(
+              childKey: ValueKey(_tab),
+              duration: 250.ms,
+              index: _tab,
+              slideOffset: 0.1,
+              child: _clocks[_tab],
+            ),
+          ),
+        ],
       ),
     );
   }
