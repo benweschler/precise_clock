@@ -26,7 +26,8 @@ class _SlidingCrossFadeTransitionState extends State<SlidingCrossFadeTransition>
     with SingleTickerProviderStateMixin {
   late Widget _firstChild = widget.child;
   late Widget _secondChild = widget.child;
-  late Direction _direction;
+  // Initial value is arbitrary.
+  Direction _direction = Direction.forward;
 
   late final _controller = AnimationController(
     // Initialize a completely animated state, reflecting the fact that no
