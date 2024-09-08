@@ -9,20 +9,18 @@ class ResponsiveButton extends StatefulWidget {
   final double _scaleLowerBound;
 
   const ResponsiveButton({
-    Key? key,
+    super.key,
     required this.onTap,
     this.wrapperBuilder,
     required this.child,
-  })  : _scaleLowerBound = 0.925,
-        super(key: key);
+  })  : _scaleLowerBound = 0.925;
 
   const ResponsiveButton.large({
-    Key? key,
+    super.key,
     required this.onTap,
     this.wrapperBuilder,
     required this.child,
-  })  : _scaleLowerBound = 0.96,
-        super(key: key);
+  })  : _scaleLowerBound = 0.96;
 
   @override
   State<ResponsiveButton> createState() => _ResponsiveButtonState();
@@ -83,11 +81,10 @@ class _BaseResponsiveButton extends StatelessWidget {
   final Widget child;
 
   const _BaseResponsiveButton({
-    Key? key,
     required this.onTap,
     required this.onPressed,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

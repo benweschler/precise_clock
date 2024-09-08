@@ -5,6 +5,9 @@ import 'package:precise_clock/animated_tab_switcher.dart';
 
 import 'clock.dart';
 
+//TODO: use style insets
+//TODO: clean up style
+
 void main() {
   runApp(const ClockApp());
 }
@@ -50,26 +53,35 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 40,
-        vertical: 20,
-      ),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Stack(
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: AnimatedTabSwitcher(
-              labels: const [
-                'PST',
-                'MST',
-                'CST',
-                'EST',
-                'UTC',
-              ],
-              onTabChanged: (tab) => setState(() => _tab = tab),
-            ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 40),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: constraints.maxWidth,
+                          ),
+                          child: AnimatedTabSwitcher(
+                            labels: const [
+                              'PST',
+                              'MST',
+                              'CST',
+                              'EST',
+                              'UTC',
+                            ],
+                            onTabChanged: (tab) => setState(() => _tab = tab),
+                          ),
+                        ),
+                      ),
+                    )),
           ),
-          Expanded(
+          Positioned.fill(
             child: SlidingCrossFadeTransition(
               childKey: ValueKey(_tab),
               duration: 250.ms,

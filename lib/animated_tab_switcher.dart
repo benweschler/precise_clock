@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:precise_clock/iterable_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:precise_clock/responsive_button.dart';
 import 'package:precise_clock/style.dart';
 
 class AnimatedTabSwitcher extends StatefulWidget {
@@ -65,13 +66,11 @@ class _TabSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         for (int i = 0; i < labels.length; i++)
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
+          ResponsiveButton(
             onTap: () => onTabChanged(i),
             child: IntrinsicWidth(
               child: Column(
