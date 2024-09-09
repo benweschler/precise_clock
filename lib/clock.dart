@@ -21,7 +21,7 @@ class _ClockState extends State<Clock> {
     super.initState();
     _timer = Timer.periodic(
       const Duration(milliseconds: 1),
-          (_) => setState(() {}),
+      (_) => setState(() {}),
     );
   }
 
@@ -44,25 +44,31 @@ class _ClockState extends State<Clock> {
 
   @override
   Widget build(BuildContext context) {
-    final textPainter = TextPainter(
-      text: TextSpan(
+    final textSpan = TextSpan(children: [
+      TextSpan(
         text: formatTime(DateTime.now()),
-        style: const TextStyle(color: Colors.white, fontSize: 50),
+        style: const TextStyle(color: Colors.white, fontSize: 30),
       ),
+      TextSpan(
+        text: DateTime.now().hour < 12 ? ' am' : ' pm',
+        style: const TextStyle(color: Colors.white, fontSize: 20),
+      ),
+    ]);
+
+    final textPainter = TextPainter(
+      text: textSpan,
       textDirection: TextDirection.ltr,
+      maxLines: 1,
     )..layout();
 
     return Center(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final scale = constraints.maxWidth / textPainter.size.width;
+          final scale = constraints.maxWidth / textPainter.width;
 
           return Transform.scale(
             scale: scale,
-            child: Text(
-              formatTime(DateTime.now()),
-              style: const TextStyle(color: Colors.white, fontSize: 50),
-            ),
+            child: Text.rich(textSpan),
           );
         },
       ),
