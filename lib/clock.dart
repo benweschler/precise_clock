@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 
 class Clock extends StatefulWidget {
-  final int hourOffset;
-  final bool utc;
+  final int utcOffset;
 
-  const Clock({super.key, this.hourOffset = 0, this.utc = false});
+  const Clock({super.key, required this.utcOffset});
 
   @override
   State<Clock> createState() => _ClockState();
@@ -32,25 +31,22 @@ class _ClockState extends State<Clock> {
   }
 
   String formatTime(DateTime t) {
-    if (widget.utc) {
-      t = t.toUtc();
-    } else {
-      t = t.copyWith(hour: t.hour + widget.hourOffset);
-    }
-
     final formatter = intl.DateFormat('hh:mm:ss.SSS');
     return formatter.format(t);
   }
 
   @override
   Widget build(BuildContext context) {
+    DateTime t = DateTime.now().toUtc();
+    t = t.copyWith(hour: t.hour + widget.utcOffset);
+
     final textSpan = TextSpan(children: [
       TextSpan(
-        text: formatTime(DateTime.now()),
+        text: formatTime(t),
         style: const TextStyle(color: Colors.white, fontSize: 30),
       ),
       TextSpan(
-        text: DateTime.now().hour < 12 ? ' am' : ' pm',
+        text: t.hour < 12 ? ' am' : ' pm',
         style: const TextStyle(color: Colors.white, fontSize: 20),
       ),
     ]);

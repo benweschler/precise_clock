@@ -43,11 +43,11 @@ class _HomeState extends State<Home> {
   int _tab = 0;
 
   static const List<Clock> _clocks = [
-    Clock(),
-    Clock(hourOffset: 1),
-    Clock(hourOffset: 2),
-    Clock(hourOffset: 3),
-    Clock(utc: true),
+    Clock(utcOffset: -7,),
+    Clock(utcOffset: -6),
+    Clock(utcOffset: -5),
+    Clock(utcOffset: -4),
+    Clock(utcOffset: 0),
   ];
 
   @override
